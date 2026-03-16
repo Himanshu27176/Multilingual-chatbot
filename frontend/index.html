@@ -34,20 +34,26 @@
       <div class="tab-slider"></div>
     </div>
     <div id="auth-alert" class="alert hidden"></div>
-    <!-- LOGIN -->
     <div id="tab-login" class="tab-content active">
       <div class="field-group"><label>Email Address</label><div class="input-wrap"><span class="input-icon">✉</span><input type="email" id="login-email" placeholder="you@example.com" autocomplete="email"/></div></div>
       <div class="field-group"><label>Password</label><div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"/><button class="eye-btn" onclick="togglePw('login-password',this)">👁</button></div></div>
       <button class="btn-primary" id="btn-login">Sign In</button>
       <p class="auth-hint">Demo: demo@chatbot.com / Demo@1234</p>
     </div>
-    <!-- REGISTER -->
     <div id="tab-register" class="tab-content">
       <div class="field-group"><label>Username</label><div class="input-wrap"><span class="input-icon">👤</span><input type="text" id="reg-username" placeholder="your_username"/><span class="field-hint" id="hint-username"></span></div></div>
       <div class="field-group"><label>Email Address</label><div class="input-wrap"><span class="input-icon">✉</span><input type="email" id="reg-email" placeholder="you@example.com"/><span class="field-hint" id="hint-email"></span></div></div>
       <div class="field-group"><label>Password</label><div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="reg-password" placeholder="Min 8 characters"/><button class="eye-btn" onclick="togglePw('reg-password',this)">👁</button></div><div class="pw-strength" id="pw-strength"></div></div>
       <div class="field-group"><label>Confirm Password</label><div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="reg-confirm" placeholder="Repeat password"/><span class="field-hint" id="hint-confirm"></span></div></div>
-      <div class="field-group"><label>Preferred Language</label><div class="input-wrap"><span class="input-icon">🌍</span><select id="reg-lang"><option value="en">English</option><option value="hi">हिंदी (Hindi)</option><option value="mr">मराठी (Marathi)</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="zh">中文</option><option value="ar">العربية</option><option value="ja">日本語</option><option value="pt">Português</option><option value="ru">Русский</option><option value="bn">বাংলা</option><option value="ur">اردو</option><option value="ta">தமிழ்</option><option value="te">తెలుగు</option><option value="ko">한국어</option></select></div></div>
+      <div class="field-group"><label>Preferred Language</label><div class="input-wrap"><span class="input-icon">🌍</span>
+        <select id="reg-lang">
+          <option value="en">English</option><option value="hi">हिंदी (Hindi)</option><option value="mr">मराठी (Marathi)</option>
+          <option value="es">Español (Spanish)</option><option value="fr">Français (French)</option><option value="de">Deutsch (German)</option>
+          <option value="zh">中文 (Chinese)</option><option value="ar">العربية (Arabic)</option><option value="ja">日本語 (Japanese)</option>
+          <option value="pt">Português</option><option value="ru">Русский</option><option value="bn">বাংলা</option>
+          <option value="ur">اردو</option><option value="ta">தமிழ்</option><option value="te">తెలుగు</option><option value="ko">한국어</option>
+        </select>
+      </div></div>
       <button class="btn-primary" id="btn-register">Create Account</button>
     </div>
   </div>
@@ -72,22 +78,11 @@
     <div class="lang-selector-wrap">
       <label class="lang-label">🌐 Chat Language</label>
       <select id="chat-lang-select" class="lang-select">
-        <option value="en">🇬🇧 English</option>
-        <option value="hi">🇮🇳 हिंदी</option>
-        <option value="mr">🇮🇳 मराठी</option>
-        <option value="es">🇪🇸 Español</option>
-        <option value="fr">🇫🇷 Français</option>
-        <option value="de">🇩🇪 Deutsch</option>
-        <option value="zh">🇨🇳 中文</option>
-        <option value="ar">🇸🇦 العربية</option>
-        <option value="ja">🇯🇵 日本語</option>
-        <option value="pt">🇧🇷 Português</option>
-        <option value="ru">🇷🇺 Русский</option>
-        <option value="bn">🇧🇩 বাংলা</option>
-        <option value="ur">🇵🇰 اردو</option>
-        <option value="ta">🇮🇳 தமிழ்</option>
-        <option value="te">🇮🇳 తెలుగు</option>
-        <option value="ko">🇰🇷 한국어</option>
+        <option value="en">🇬🇧 English</option><option value="hi">🇮🇳 हिंदी</option><option value="mr">🇮🇳 मराठी</option>
+        <option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option>
+        <option value="zh">🇨🇳 中文</option><option value="ar">🇸🇦 العربية</option><option value="ja">🇯🇵 日本語</option>
+        <option value="pt">🇧🇷 Português</option><option value="ru">🇷🇺 Русский</option><option value="bn">🇧🇩 বাংলা</option>
+        <option value="ur">🇵🇰 اردو</option><option value="ta">🇮🇳 தமிழ்</option><option value="te">🇮🇳 తెలుగు</option><option value="ko">🇰🇷 한국어</option>
       </select>
     </div>
     <div class="sessions-list" id="sessions-list"><p class="sessions-empty">No chats yet. Start one!</p></div>
@@ -129,7 +124,6 @@
       </div>
     </div>
 
-    <!-- Translate panel -->
     <div class="translate-panel hidden" id="translate-panel">
       <div class="translate-header"><span>Quick Translate</span><button onclick="document.getElementById('translate-panel').classList.add('hidden')">✕</button></div>
       <textarea id="translate-input" placeholder="Type text to translate…" rows="3"></textarea>
@@ -145,15 +139,12 @@
       <div class="translate-result" id="translate-result"></div>
     </div>
 
-    <!-- Input area -->
     <div class="input-area">
       <div class="input-box">
         <button class="voice-btn" id="btn-voice" title="Voice Input">🎤</button>
         <textarea id="msg-input" placeholder="Type or speak your message…" rows="1"></textarea>
         <button class="send-btn" id="btn-send" title="Send">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </div>
       <p class="input-hint">🎤 Voice input · 🌐 Auto language detection · Enter to send</p>
@@ -163,4 +154,4 @@
 
 <script src="js/app.js"></script>
 </body>
-</html>1
+</html>
