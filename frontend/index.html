@@ -3,490 +3,203 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>TransLingo — Real-time Translator</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-<style>
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-:root {
-  --bg:#f0f4ff; --surface:#ffffff; --card:#ffffff; --border:#e2e8f8;
-  --shadow:rgba(99,120,210,0.12); --deep:#1a1f3c; --primary:#3a56e8;
-  --primary2:#6377f0; --accent:#ff5c8a; --accent2:#00c9a7; --warn:#ffa94d;
-  --text:#1a1f3c; --muted:#8892b0; --light:#f7f9ff;
-  --grad1:linear-gradient(135deg,#3a56e8 0%,#6c5ce7 100%);
-  --grad2:linear-gradient(135deg,#ff5c8a 0%,#ff8a65 100%);
-  --grad3:linear-gradient(135deg,#00c9a7 0%,#00b4d8 100%);
-}
-html{font-size:16px;}
-body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;position:relative;overflow-x:hidden;}
-.bg-blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
-.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.18;animation:blobFloat 12s ease-in-out infinite alternate;}
-.blob1{width:520px;height:520px;background:#3a56e8;top:-120px;left:-100px;animation-delay:0s;}
-.blob2{width:380px;height:380px;background:#ff5c8a;bottom:-80px;right:-80px;animation-delay:-4s;}
-.blob3{width:300px;height:300px;background:#00c9a7;top:40%;left:55%;animation-delay:-7s;}
-@keyframes blobFloat{0%{transform:translate(0,0) scale(1);}100%{transform:translate(40px,30px) scale(1.08);}}
-.wrapper{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 20px 60px;}
-/* HEADER */
-header{display:flex;align-items:center;justify-content:space-between;padding:28px 0 20px;}
-.logo{display:flex;align-items:center;gap:12px;font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:800;color:var(--deep);letter-spacing:-0.5px;}
-.logo-mark{width:44px;height:44px;border-radius:14px;background:var(--grad1);display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 6px 20px rgba(58,86,232,.35);}
-.logo span{color:var(--primary);}
-.badge{background:white;border:1.5px solid var(--border);border-radius:30px;padding:6px 16px;font-size:.75rem;font-weight:600;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;box-shadow:0 2px 8px var(--shadow);}
-.badge .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent2);margin-right:6px;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 2px rgba(0,201,167,.25);}50%{box-shadow:0 0 0 5px rgba(0,201,167,.1);}}
-/* TABS */
-.tabs{display:flex;gap:6px;background:white;border:1.5px solid var(--border);border-radius:16px;padding:5px;width:fit-content;margin-bottom:28px;box-shadow:0 4px 16px var(--shadow);}
-.tab{padding:9px 24px;border-radius:11px;border:none;background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:7px;}
-.tab.active{background:var(--grad1);color:white;box-shadow:0 4px 16px rgba(58,86,232,.35);}
-.tab:not(.active):hover{color:var(--primary);background:#f0f4ff;}
-/* CARD */
-.translator-card{background:white;border-radius:24px;border:1.5px solid var(--border);box-shadow:0 20px 60px rgba(58,86,232,.1),0 4px 20px rgba(0,0,0,.04);overflow:hidden;animation:cardIn .5s cubic-bezier(.34,1.56,.64,1) both;}
-@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.97);}to{opacity:1;transform:translateY(0) scale(1);}}
-/* LANG BAR */
-.lang-bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:18px 24px;background:linear-gradient(135deg,#f7f9ff 0%,#eef1ff 100%);border-bottom:1.5px solid var(--border);}
-.lang-selector{display:flex;flex-direction:column;gap:6px;}
-.lang-label{font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:700;}
-.lang-select-wrap{position:relative;}
-.lang-select-wrap::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--primary);pointer-events:none;font-size:.75rem;}
-select.lang-pick{width:100%;padding:11px 36px 11px 14px;border:1.5px solid var(--border);border-radius:12px;background:white;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:600;color:var(--deep);cursor:pointer;outline:none;appearance:none;transition:border-color .2s,box-shadow .2s;box-shadow:0 2px 8px var(--shadow);}
-select.lang-pick:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(58,86,232,.12);}
-.swap-area{display:flex;flex-direction:column;align-items:center;gap:6px;}
-.swap-btn{width:48px;height:48px;border-radius:50%;background:white;border:1.5px solid var(--border);color:var(--primary);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 12px var(--shadow);}
-.swap-btn:hover{background:var(--grad1);color:white;border-color:transparent;transform:rotate(180deg) scale(1.1);box-shadow:0 8px 24px rgba(58,86,232,.35);}
-/* PANELS */
-.panels-grid{display:grid;grid-template-columns:1fr 1fr;min-height:260px;}
-.panel{padding:22px 24px;position:relative;}
-.panel.left{border-right:1.5px solid var(--border);}
-.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.panel-title{font-size:.72rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;color:var(--muted);}
-.panel-actions{display:flex;gap:8px;}
-.icon-btn{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--border);background:var(--light);color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-.icon-btn:hover{border-color:var(--primary);color:var(--primary);background:#eef1ff;}
-.icon-btn.recording{background:var(--grad2);border-color:transparent;color:white;animation:recPulse 1s infinite;}
-.icon-btn.active{background:var(--grad3);border-color:transparent;color:white;}
-@keyframes recPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,92,138,.5);}50%{box-shadow:0 0 0 6px rgba(255,92,138,0);}}
-textarea#inputText{width:100%;min-height:190px;border:none;outline:none;background:transparent;resize:none;font-family:'Outfit',sans-serif;font-size:1.05rem;line-height:1.75;color:var(--deep);}
-textarea#inputText::placeholder{color:#c0c8e0;}
-.char-bar{display:flex;align-items:center;justify-content:space-between;margin-top:10px;}
-.char-count{font-size:.73rem;color:var(--muted);}
-.char-count.warn{color:var(--warn);}
-.output-box{min-height:190px;font-family:'Outfit',sans-serif;font-size:1.05rem;line-height:1.75;color:var(--deep);white-space:pre-wrap;word-break:break-word;}
-.output-box.placeholder{color:#c0c8e0;font-style:italic;}
-.output-box.loading{display:flex;align-items:center;gap:10px;color:var(--muted);}
-.loading-dots{display:flex;gap:5px;}
-.loading-dots span{width:8px;height:8px;background:var(--primary2);border-radius:50%;animation:bounce 1.2s ease-in-out infinite;}
-.loading-dots span:nth-child(2){animation-delay:.2s;}
-.loading-dots span:nth-child(3){animation-delay:.4s;}
-@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-10px);}}
-/* VOICE WAVE */
-.voice-wave{display:none;align-items:center;gap:4px;height:30px;margin-top:10px;}
-.voice-wave.active{display:flex;}
-.wave-bar{width:4px;border-radius:4px;background:var(--accent);animation:wave 1s ease-in-out infinite;}
-.wave-bar:nth-child(1){height:10px;animation-delay:0s;}
-.wave-bar:nth-child(2){height:22px;animation-delay:.1s;}
-.wave-bar:nth-child(3){height:16px;animation-delay:.2s;}
-.wave-bar:nth-child(4){height:28px;animation-delay:.15s;}
-.wave-bar:nth-child(5){height:18px;animation-delay:.05s;}
-.wave-bar:nth-child(6){height:12px;animation-delay:.25s;}
-@keyframes wave{0%,100%{transform:scaleY(.5);}50%{transform:scaleY(1.2);}}
-.voice-status{font-size:.8rem;color:var(--accent);font-weight:600;margin-top:4px;display:none;}
-/* ACTION BAR */
-.action-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-top:1.5px solid var(--border);background:linear-gradient(135deg,#f7f9ff 0%,#eef1ff 100%);flex-wrap:wrap;gap:12px;}
-.action-left{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.action-right{display:flex;align-items:center;gap:10px;}
-.btn-outline{padding:10px 18px;border-radius:10px;border:1.5px solid var(--border);background:white;font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
-.btn-outline:hover{border-color:var(--primary);color:var(--primary);background:#eef1ff;}
-.btn-primary{padding:12px 34px;border-radius:12px;border:none;background:var(--grad1);color:white;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;letter-spacing:.3px;box-shadow:0 6px 20px rgba(58,86,232,.4);transition:all .25s;display:flex;align-items:center;gap:8px;}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(58,86,232,.45);}
-.btn-primary:disabled{opacity:.55;cursor:not-allowed;transform:none;}
-.btn-danger{padding:10px 18px;border-radius:10px;border:1.5px solid #ffd5e0;background:#fff5f7;color:var(--accent);cursor:pointer;font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:6px;}
-.btn-danger:hover{background:#ffe0e8;border-color:var(--accent);}
-.spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.35);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none;}
-@keyframes spin{to{transform:rotate(360deg);}}
-/* QUICK LANGS */
-.quick-section{margin-bottom:20px;}
-.quick-label{font-size:.75rem;color:var(--muted);font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;}
-.quick-langs{display:flex;gap:8px;flex-wrap:wrap;}
-.ql-btn{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:white;cursor:pointer;font-size:.82rem;font-weight:600;color:var(--muted);transition:all .2s;box-shadow:0 2px 8px var(--shadow);display:flex;align-items:center;gap:6px;}
-.ql-btn:hover{border-color:var(--primary);color:var(--primary);background:#eef1ff;transform:translateY(-1px);}
-.ql-btn.active{background:var(--grad1);color:white;border-color:transparent;box-shadow:0 4px 14px rgba(58,86,232,.35);}
-/* ERROR */
-.error-bar{background:#fff5f7;border:1.5px solid #ffd5e0;color:var(--accent);padding:10px 18px;border-radius:12px;font-size:.85rem;font-weight:500;margin-top:14px;display:none;align-items:center;gap:8px;}
-/* HISTORY */
-#historyTab{display:none;animation:cardIn .4s ease both;}
-.history-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
-.section-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--deep);}
-.history-grid{display:flex;flex-direction:column;gap:14px;max-height:520px;overflow-y:auto;padding-right:4px;}
-.history-grid::-webkit-scrollbar{width:4px;}
-.history-grid::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
-.h-card{background:white;border:1.5px solid var(--border);border-radius:16px;padding:18px 20px;cursor:pointer;transition:all .25s;box-shadow:0 2px 12px var(--shadow);animation:slideUp .35s ease both;}
-@keyframes slideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-.h-card:hover{border-color:var(--primary);box-shadow:0 8px 24px rgba(58,86,232,.12);transform:translateY(-2px);}
-.h-meta{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
-.h-lang{background:#eef1ff;color:var(--primary);border-radius:8px;padding:3px 10px;font-size:.75rem;font-weight:700;}
-.h-arrow{color:var(--muted);font-size:.9rem;}
-.h-time{margin-left:auto;color:var(--muted);font-size:.75rem;}
-.h-texts{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.h-block-label{font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px;font-weight:700;}
-.h-block-text{font-size:.9rem;line-height:1.55;color:var(--deep);}
-.empty-state{text-align:center;padding:70px 30px;color:var(--muted);}
-.empty-icon{font-size:52px;margin-bottom:14px;opacity:.45;}
-.empty-msg{font-size:.95rem;}
-/* TOAST */
-.toast{position:fixed;bottom:30px;right:30px;z-index:999;background:var(--deep);color:white;padding:13px 22px;border-radius:14px;font-size:.88rem;font-weight:500;box-shadow:0 10px 40px rgba(0,0,0,.22);transform:translateY(80px);opacity:0;transition:all .38s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:9px;}
-.toast.show{transform:translateY(0);opacity:1;}
-.t-icon{font-size:16px;}
-@media(max-width:700px){
-  .panels-grid{grid-template-columns:1fr;}
-  .panel.left{border-right:none;border-bottom:1.5px solid var(--border);}
-  .lang-bar{grid-template-columns:1fr;}
-  .h-texts{grid-template-columns:1fr;}
-  .action-bar{flex-direction:column;align-items:stretch;}
-  .action-right{justify-content:flex-end;}
-}
-</style>
+<title>LinguaBot — Multilingual AI Chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
-<div class="bg-blobs">
-  <div class="blob blob1"></div>
-  <div class="blob blob2"></div>
-  <div class="blob blob3"></div>
-</div>
 
-<div class="wrapper">
-  <header>
-    <div class="logo">
-      <div class="logo-mark">🌐</div>
-      Trans<span>Lingo</span>
-    </div>
-    <div class="badge"><span class="dot"></span>Live · SQL Backed</div>
-  </header>
-
-  <div class="tabs">
-    <button class="tab active" id="tab-translate" onclick="switchTab('translate')">⚡ Translate</button>
-    <button class="tab" id="tab-history" onclick="switchTab('history')">🕓 History</button>
+<!-- AUTH SCREEN -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-bg">
+    <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+    <div class="grid-overlay"></div>
   </div>
-
-  <!-- TRANSLATE TAB -->
-  <div id="translateTab">
-    <div class="quick-section">
-      <div class="quick-label">Quick Target Language</div>
-      <div class="quick-langs">
-        <button class="ql-btn" onclick="setQL(this,'hi')">🇮🇳 Hindi</button>
-        <button class="ql-btn" onclick="setQL(this,'fr')">🇫🇷 French</button>
-        <button class="ql-btn" onclick="setQL(this,'de')">🇩🇪 German</button>
-        <button class="ql-btn" onclick="setQL(this,'ja')">🇯🇵 Japanese</button>
-        <button class="ql-btn" onclick="setQL(this,'zh')">🇨🇳 Chinese</button>
-        <button class="ql-btn" onclick="setQL(this,'es')">🇪🇸 Spanish</button>
-        <button class="ql-btn" onclick="setQL(this,'ar')">🇸🇦 Arabic</button>
-        <button class="ql-btn" onclick="setQL(this,'ru')">🇷🇺 Russian</button>
-        <button class="ql-btn" onclick="setQL(this,'ko')">🇰🇷 Korean</button>
-        <button class="ql-btn" onclick="setQL(this,'pt')">🇧🇷 Portuguese</button>
-        <button class="ql-btn" onclick="setQL(this,'it')">🇮🇹 Italian</button>
-        <button class="ql-btn" onclick="setQL(this,'tr')">🇹🇷 Turkish</button>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-icon">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="15" stroke="url(#lg1)" stroke-width="2"/>
+          <path d="M8 12h16M8 16h10M8 20h13" stroke="url(#lg1)" stroke-width="2" stroke-linecap="round"/>
+          <defs><linearGradient id="lg1" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse"><stop stop-color="#7C3AED"/><stop offset="1" stop-color="#06B6D4"/></linearGradient></defs>
+        </svg>
       </div>
+      <span class="logo-text">LinguaBot</span>
     </div>
-
-    <div class="translator-card">
-      <div class="lang-bar">
-        <div class="lang-selector">
-          <div class="lang-label">Translate From</div>
-          <div class="lang-select-wrap">
-            <select class="lang-pick" id="sourceLang">
-              <option value="en">🇺🇸 English</option>
-              <option value="hi">🇮🇳 Hindi</option>
-              <option value="fr">🇫🇷 French</option>
-              <option value="de">🇩🇪 German</option>
-              <option value="ja">🇯🇵 Japanese</option>
-              <option value="zh">🇨🇳 Chinese (Simplified)</option>
-              <option value="es">🇪🇸 Spanish</option>
-              <option value="ar">🇸🇦 Arabic</option>
-              <option value="ru">🇷🇺 Russian</option>
-              <option value="ko">🇰🇷 Korean</option>
-              <option value="pt">🇧🇷 Portuguese</option>
-              <option value="it">🇮🇹 Italian</option>
-              <option value="tr">🇹🇷 Turkish</option>
-              <option value="nl">🇳🇱 Dutch</option>
-              <option value="pl">🇵🇱 Polish</option>
-              <option value="sv">🇸🇪 Swedish</option>
-            </select>
-          </div>
-        </div>
-        <div class="swap-area">
-          <button class="swap-btn" onclick="swapLangs()" title="Swap">⇄</button>
-        </div>
-        <div class="lang-selector">
-          <div class="lang-label">Translate To</div>
-          <div class="lang-select-wrap">
-            <select class="lang-pick" id="targetLang">
-              <option value="hi">🇮🇳 Hindi</option>
-              <option value="en">🇺🇸 English</option>
-              <option value="fr">🇫🇷 French</option>
-              <option value="de">🇩🇪 German</option>
-              <option value="ja">🇯🇵 Japanese</option>
-              <option value="zh">🇨🇳 Chinese (Simplified)</option>
-              <option value="es">🇪🇸 Spanish</option>
-              <option value="ar">🇸🇦 Arabic</option>
-              <option value="ru">🇷🇺 Russian</option>
-              <option value="ko">🇰🇷 Korean</option>
-              <option value="pt">🇧🇷 Portuguese</option>
-              <option value="it">🇮🇹 Italian</option>
-              <option value="tr">🇹🇷 Turkish</option>
-              <option value="nl">🇳🇱 Dutch</option>
-              <option value="pl">🇵🇱 Polish</option>
-              <option value="sv">🇸🇪 Swedish</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="panels-grid">
-        <div class="panel left">
-          <div class="panel-head">
-            <div class="panel-title">Your Text</div>
-            <div class="panel-actions">
-              <button class="icon-btn" id="micBtn" onclick="toggleMic()" title="Voice Input">🎙️</button>
-              <button class="icon-btn" onclick="pasteClip()" title="Paste">📋</button>
-              <button class="icon-btn" onclick="clearInput()" title="Clear">✕</button>
-            </div>
-          </div>
-          <textarea id="inputText" placeholder="Type text here, or press 🎙️ to speak…" maxlength="2000" oninput="onType()"></textarea>
-          <div class="voice-wave" id="voiceWave">
-            <div class="wave-bar"></div><div class="wave-bar"></div>
-            <div class="wave-bar"></div><div class="wave-bar"></div>
-            <div class="wave-bar"></div><div class="wave-bar"></div>
-          </div>
-          <div class="voice-status" id="voiceStatus">🎙️ Listening… speak now</div>
-          <div class="char-bar">
-            <span class="char-count" id="charCount">0 / 2000</span>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-head">
-            <div class="panel-title">Translation</div>
-            <div class="panel-actions">
-              <button class="icon-btn" id="speakBtn" onclick="speakOut()" title="Read Aloud">🔊</button>
-              <button class="icon-btn" onclick="copyOut()" title="Copy">📄</button>
-            </div>
-          </div>
-          <div class="output-box placeholder" id="outputBox">Translation will appear here…</div>
-          <div class="char-bar">
-            <span class="char-count" id="outCount"></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="action-bar">
-        <div class="action-left">
-          <button class="btn-outline" onclick="clearAll()">🗑 Clear</button>
-          <button class="btn-outline" onclick="saveEntry()">💾 Save</button>
-        </div>
-        <div class="action-right">
-          <button class="btn-primary" id="translateBtn" onclick="doTranslate()">
-            <div class="spinner" id="spinner"></div>
-            <span id="btnTxt">✦ Translate</span>
-          </button>
-        </div>
-      </div>
+    <div class="auth-tabs">
+      <button class="tab-btn active" data-tab="login">Sign In</button>
+      <button class="tab-btn" data-tab="register">Create Account</button>
+      <div class="tab-slider"></div>
     </div>
-
-    <div class="error-bar" id="errorBar">⚠️ <span id="errorTxt"></span></div>
-  </div>
-
-  <!-- HISTORY TAB -->
-  <div id="historyTab">
-    <div class="history-topbar">
-      <div class="section-title">Translation History</div>
-      <button class="btn-danger" onclick="clearHistory()">🗑 Clear All</button>
+    <div id="auth-alert" class="alert hidden"></div>
+    <div id="tab-login" class="tab-content active">
+      <div class="field-group"><label>Email Address</label><div class="input-wrap"><span class="input-icon">✉</span><input type="email" id="login-email" placeholder="you@example.com" autocomplete="email"/></div></div>
+      <div class="field-group"><label>Password</label><div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"/><button class="eye-btn" onclick="togglePw('login-password',this)">👁</button></div></div>
+      <button class="btn-primary" id="btn-login">Sign In</button>
+      <p class="auth-hint">Demo: demo@chatbot.com / Demo@1234</p>
     </div>
-    <div class="history-grid" id="histGrid">
-      <div class="empty-state"><div class="empty-icon">📭</div><div class="empty-msg">No translations yet.</div></div>
+    <div id="tab-register" class="tab-content">
+      <div class="field-group"><label>Username</label><div class="input-wrap"><span class="input-icon">👤</span><input type="text" id="reg-username" placeholder="your_username"/><span class="field-hint" id="hint-username"></span></div></div>
+      <div class="field-group"><label>Email Address</label><div class="input-wrap"><span class="input-icon">✉</span><input type="email" id="reg-email" placeholder="you@example.com"/><span class="field-hint" id="hint-email"></span></div></div>
+      <div class="field-group"><label>Password</label><div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="reg-password" placeholder="Min 8 characters"/><button class="eye-btn" onclick="togglePw('reg-password',this)">👁</button></div><div class="pw-strength" id="pw-strength"></div></div>
+      <div class="field-group"><label>Confirm Password</label><div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="reg-confirm" placeholder="Repeat password"/><span class="field-hint" id="hint-confirm"></span></div></div>
+      <div class="field-group"><label>Preferred Language</label><div class="input-wrap"><span class="input-icon">🌍</span>
+        <select id="reg-lang">
+          <option value="en">English</option><option value="hi">हिंदी (Hindi)</option><option value="mr">मराठी (Marathi)</option>
+          <option value="es">Español (Spanish)</option><option value="fr">Français (French)</option><option value="de">Deutsch (German)</option>
+          <option value="zh">中文 (Chinese)</option><option value="ar">العربية (Arabic)</option><option value="ja">日本語 (Japanese)</option>
+          <option value="pt">Português</option><option value="ru">Русский</option><option value="bn">বাংলা</option>
+          <option value="ur">اردو</option><option value="ta">தமிழ்</option><option value="te">తెలుగు</option><option value="ko">한국어</option>
+        </select>
+      </div></div>
+      <button class="btn-primary" id="btn-register">Create Account</button>
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast"><span class="t-icon"></span><span id="toastMsg"></span></div>
+<!-- APP SCREEN -->
+<div id="app-screen" class="app-screen hidden">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="app-logo">
+        <div class="logo-icon sm">
+          <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+            <circle cx="16" cy="16" r="15" stroke="url(#lg2)" stroke-width="2"/>
+            <path d="M8 12h16M8 16h10M8 20h13" stroke="url(#lg2)" stroke-width="2" stroke-linecap="round"/>
+            <defs><linearGradient id="lg2" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse"><stop stop-color="#7C3AED"/><stop offset="1" stop-color="#06B6D4"/></linearGradient></defs>
+          </svg>
+        </div>
+        <span>LinguaBot</span>
+      </div>
+      <button class="icon-btn" id="btn-new-chat" title="New Chat">＋</button>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" class="search-input" placeholder="Search chats…"/>
+    </div>
+    <div class="lang-selector-wrap">
+      <label class="lang-label">🌐 Chat Language</label>
+      <select id="chat-lang-select" class="lang-select">
+        <option value="en">🇬🇧 English</option><option value="hi">🇮🇳 हिंदी</option><option value="mr">🇮🇳 मराठी</option>
+        <option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option>
+        <option value="zh">🇨🇳 中文</option><option value="ar">🇸🇦 العربية</option><option value="ja">🇯🇵 日本語</option>
+        <option value="pt">🇧🇷 Português</option><option value="ru">🇷🇺 Русский</option><option value="bn">🇧🇩 বাংলা</option>
+        <option value="ur">🇵🇰 اردو</option><option value="ta">🇮🇳 தமிழ்</option><option value="te">🇮🇳 తెలుగు</option><option value="ko">🇰🇷 한국어</option>
+      </select>
+    </div>
+    <div class="sessions-list" id="sessions-list"><p class="sessions-empty">No chats yet. Start one!</p></div>
+    <div class="sidebar-footer">
+      <div class="user-badge" id="user-badge">
+        <div class="avatar" id="user-avatar">U</div>
+        <div class="user-info"><span id="user-name-display">User</span><span id="user-email-display" class="small-text">user@email.com</span></div>
+      </div>
+      <button class="icon-btn danger" id="btn-logout" title="Sign Out">⏻</button>
+    </div>
+  </aside>
 
-<script>
-const API = "http://localhost:5000/api";
-const BCP = {en:'en-US',hi:'hi-IN',fr:'fr-FR',de:'de-DE',ja:'ja-JP',zh:'zh-CN',es:'es-ES',ar:'ar-SA',ru:'ru-RU',ko:'ko-KR',pt:'pt-BR',it:'it-IT',tr:'tr-TR',nl:'nl-NL',pl:'pl-PL',sv:'sv-SE'};
-const LNAME = {en:'English',hi:'Hindi',fr:'French',de:'German',ja:'Japanese',zh:'Chinese',es:'Spanish',ar:'Arabic',ru:'Russian',ko:'Korean',pt:'Portuguese',it:'Italian',tr:'Turkish',nl:'Dutch',pl:'Polish',sv:'Swedish'};
-let rec=null, isRec=false, outText='';
+  <div class="sidebar-overlay hidden" id="sidebar-overlay"></div>
 
-window.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('inputText').addEventListener('keydown',e=>{ if((e.ctrlKey||e.metaKey)&&e.key==='Enter') doTranslate(); });
-  initRec();
-});
+  <main class="main-area">
+    <header class="chat-header">
+      <button class="icon-btn mobile-only" id="btn-menu">☰</button>
+      <div class="chat-title-wrap">
+        <h2 id="chat-title">Welcome to LinguaBot</h2>
+        <span id="chat-lang-badge" class="lang-badge">EN</span>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" id="btn-theme" title="Toggle Theme">☀️</button>
+        <button class="icon-btn" id="btn-clear-chat" title="Clear Chat">🗑️</button>
+        <button class="icon-btn" id="btn-export" title="Export as Text">📄</button>
+        <button class="icon-btn" id="btn-export-pdf" title="Export as PDF">📑</button>
+        <button class="icon-btn" id="btn-translate-toggle" title="Quick Translate">🔄</button>
+      </div>
+    </header>
 
-/* TABS */
-function switchTab(t){
-  ['translate','history'].forEach(x=>{
-    document.getElementById('tab-'+x).classList.toggle('active',x===t);
-    document.getElementById(x+'Tab').style.display=x===t?'block':'none';
-  });
-  if(t==='history') loadHist();
-}
+    <div class="messages-area" id="messages-area">
+      <div class="welcome-screen" id="welcome-screen">
+        <div class="welcome-icon">🌐</div>
+        <h3>Talk in any language</h3>
+        <p>Type, speak, or 📷 send an image. LinguaBot detects languages, translates text in photos, and responds in 16+ languages.</p>
+        <div class="lang-chips">
+          <span class="chip">🇬🇧 English</span><span class="chip">🇮🇳 हिंदी</span><span class="chip">🇮🇳 मराठी</span>
+          <span class="chip">🇪🇸 Español</span><span class="chip">🇫🇷 Français</span><span class="chip">🇨🇳 中文</span>
+          <span class="chip">🇸🇦 العربية</span><span class="chip">🇯🇵 日本語</span>
+        </div>
+        <div class="welcome-features">
+          <span class="feat-chip">📷 Camera</span>
+          <span class="feat-chip">🖼️ Image Upload</span>
+          <span class="feat-chip">🔍 Text Detection</span>
+          <span class="feat-chip">🌐 Auto Translate</span>
+        </div>
+      </div>
+    </div>
 
-/* QUICK LANG */
-function setQL(btn,code){
-  document.getElementById('targetLang').value=code;
-  document.querySelectorAll('.ql-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  toast('Target: '+LNAME[code],'🎯');
-}
+    <div class="translate-panel hidden" id="translate-panel">
+      <div class="translate-header"><span>Quick Translate</span><button onclick="document.getElementById('translate-panel').classList.add('hidden')">✕</button></div>
+      <textarea id="translate-input" placeholder="Type text to translate…" rows="3"></textarea>
+      <div class="translate-controls">
+        <select id="translate-target">
+          <option value="hi">हिंदी</option><option value="mr">मराठी</option><option value="en">English</option>
+          <option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option>
+          <option value="zh">中文</option><option value="ar">العربية</option><option value="ja">日本語</option>
+          <option value="pt">Português</option><option value="ru">Русский</option><option value="ko">한국어</option>
+        </select>
+        <button class="btn-sm" id="btn-do-translate">Translate →</button>
+      </div>
+      <div class="translate-result" id="translate-result"></div>
+    </div>
 
-/* SWAP */
-function swapLangs(){
-  const s=document.getElementById('sourceLang'), t=document.getElementById('targetLang');
-  const tmp=s.value; s.value=t.value; t.value=tmp;
-  const inp=document.getElementById('inputText').value;
-  if(outText){ document.getElementById('inputText').value=outText; onType(); renderOut(inp); }
-  toast('Swapped!','⇄');
-}
+    <!-- Image preview strip -->
+    <div id="image-preview-wrap" class="image-preview-wrap hidden">
+      <img id="image-preview-thumb" class="image-preview-thumb" alt="Selected image"/>
+      <div class="image-preview-info">
+        <span>📷 Image ready to send</span>
+        <small>Type a question or send as-is to analyze</small>
+      </div>
+      <button id="btn-remove-image" class="btn-remove-img" title="Remove image">✕</button>
+    </div>
 
-/* INPUT */
-function onType(){
-  const l=document.getElementById('inputText').value.length;
-  const cc=document.getElementById('charCount');
-  cc.textContent=l+' / 2000'; cc.className='char-count'+(l>1800?' warn':'');
-  document.getElementById('errorBar').style.display='none';
-}
-function clearInput(){ document.getElementById('inputText').value=''; onType(); }
-function clearAll(){
-  clearInput();
-  document.getElementById('outputBox').innerHTML='Translation will appear here…';
-  document.getElementById('outputBox').className='output-box placeholder';
-  document.getElementById('outCount').textContent=''; outText='';
-  document.getElementById('errorBar').style.display='none';
-}
-async function pasteClip(){
-  try{ const t=await navigator.clipboard.readText(); document.getElementById('inputText').value=t; onType(); toast('Pasted!','📋'); }
-  catch{ toast('Clipboard unavailable','⚠️'); }
-}
+    <div class="input-area">
+      <div class="input-box">
+        <button class="voice-btn" id="btn-voice" title="Voice Input">🎤</button>
+        <button class="camera-btn" id="btn-camera" title="Camera / Upload Image">📷</button>
+        <button class="camera-btn" id="btn-upload-img" title="Upload Image">🖼️</button>
+        <input type="file" id="file-input" accept="image/*" class="hidden"/>
+        <textarea id="msg-input" placeholder="Type or speak your message…" rows="1"></textarea>
+        <button class="send-btn" id="btn-send" title="Send">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <p class="input-hint">🎤 Voice · 📷 Camera · 🖼️ Upload image · 🌐 Auto-detect language · Enter to send</p>
+    </div>
+  </main>
+</div>
 
-/* TRANSLATE */
-async function doTranslate(){
-  const text=document.getElementById('inputText').value.trim();
-  if(!text){toast('Enter some text first!','⚠️');return;}
-  const src=document.getElementById('sourceLang').value, tgt=document.getElementById('targetLang').value;
-  if(src===tgt){toast('Same language selected!','⚠️');return;}
-  setLoad(true);
-  document.getElementById('errorBar').style.display='none';
-  document.getElementById('outputBox').className='output-box loading';
-  document.getElementById('outputBox').innerHTML='<div class="loading-dots"><span></span><span></span><span></span></div>';
-  try{
-    const res=await fetch(API+'/translate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,source:src,target:tgt})});
-    if(!res.ok) throw new Error(res.status);
-    const d=await res.json();
-    renderOut(d.translated);
-    toast('Done!','✅');
-  }catch(e){
-    const demo=demoTrans(text,tgt);
-    renderOut(demo);
-    document.getElementById('errorBar').style.display='flex';
-    document.getElementById('errorTxt').textContent='Backend offline — demo mode. Run: python app.py in backend/';
-  }
-  setLoad(false);
-}
-function renderOut(t){
-  outText=t;
-  const el=document.getElementById('outputBox');
-  el.className='output-box'; el.textContent=t;
-  document.getElementById('outCount').textContent=t.length+' chars';
-}
-function setLoad(v){
-  document.getElementById('translateBtn').disabled=v;
-  document.getElementById('spinner').style.display=v?'block':'none';
-  document.getElementById('btnTxt').textContent=v?'Translating…':'✦ Translate';
-}
-function demoTrans(text,tgt){
-  const m={hi:`"${text}" का हिन्दी अनुवाद: नमस्ते, यह एक प्रदर्शन अनुवाद है।`,fr:`Traduction de "${text}": Bonjour! Ceci est une démo.`,de:`Übersetzung von "${text}": Hallo! Dies ist eine Demo.`,ja:`「${text}」の翻訳: こんにちは、これはデモです。`,es:`Traducción de "${text}": ¡Hola! Esto es una demo.`,ar:`ترجمة "${text}": مرحبًا! هذا عرض توضيحي.`,zh:`"${text}" 的翻译：你好！这是演示翻译。`,ru:`Перевод "${text}": Привет! Это демо-режим.`,ko:`"${text}" 번역: 안녕하세요! 이것은 데모입니다.`,pt:`Tradução de "${text}": Olá! Esta é uma demonstração.`,it:`Traduzione di "${text}": Ciao! Questa è una demo.`,tr:`"${text}" çevirisi: Merhaba! Bu bir demo.`};
-  return m[tgt]||`[${tgt.toUpperCase()}] Demo: ${text}`;
-}
+<!-- CAMERA MODAL -->
+<div id="camera-modal" class="camera-modal hidden">
+  <div class="camera-modal-inner">
+    <div class="camera-modal-header">
+      <span>📷 Take a Photo</span>
+      <button id="btn-camera-close" class="camera-close-btn">✕</button>
+    </div>
+    <div class="camera-body">
+      <video id="camera-video" autoplay playsinline class="camera-video"></video>
+      <canvas id="camera-canvas" class="hidden"></canvas>
+      <div id="camera-preview-wrap" class="camera-preview-wrap hidden">
+        <img id="camera-preview-img" class="camera-preview-img" alt="Captured photo"/>
+      </div>
+    </div>
+    <div class="camera-actions">
+      <button id="btn-snap" class="btn-primary" style="width:auto;padding:10px 28px;">📸 Snap Photo</button>
+      <button id="btn-retry" class="btn-sm hidden">🔄 Retake</button>
+      <button id="btn-use-photo" class="btn-sm hidden-init">✅ Use Photo</button>
+    </div>
+    <p style="font-size:12px;color:var(--text-mute);text-align:center;margin-top:8px;">Or use the 🖼️ button in the input bar to upload from your device</p>
+  </div>
+</div>
 
-/* COPY */
-function copyOut(){
-  if(!outText){toast('Nothing to copy!','⚠️');return;}
-  navigator.clipboard.writeText(outText).then(()=>toast('Copied!','📋')).catch(()=>{
-    const ta=document.createElement('textarea');ta.value=outText;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('Copied!','📋');
-  });
-}
-
-/* VOICE INPUT */
-function initRec(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR) return;
-  rec=new SR(); rec.continuous=false; rec.interimResults=true;
-  rec.onresult=e=>{
-    let f='',i='';
-    for(let x=e.resultIndex;x<e.results.length;x++){if(e.results[x].isFinal)f+=e.results[x][0].transcript;else i+=e.results[x][0].transcript;}
-    document.getElementById('inputText').value=f||i; onType();
-  };
-  rec.onend=()=>stopRec();
-  rec.onerror=()=>{stopRec();toast('Mic error','⚠️');};
-}
-function toggleMic(){if(!rec){toast('Voice not supported','⚠️');return;}isRec?stopRec():startRec();}
-function startRec(){
-  rec.lang=BCP[document.getElementById('sourceLang').value]||'en-US';
-  rec.start(); isRec=true;
-  document.getElementById('micBtn').classList.add('recording');
-  document.getElementById('voiceWave').classList.add('active');
-  document.getElementById('voiceStatus').style.display='block';
-}
-function stopRec(){
-  try{if(rec&&isRec)rec.stop();}catch(e){}
-  isRec=false;
-  document.getElementById('micBtn').classList.remove('recording');
-  document.getElementById('voiceWave').classList.remove('active');
-  document.getElementById('voiceStatus').style.display='none';
-}
-
-/* VOICE OUTPUT */
-function speakOut(){
-  if(!outText){toast('Nothing to speak!','⚠️');return;}
-  if(!window.speechSynthesis){toast('TTS not supported','⚠️');return;}
-  window.speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(outText);
-  u.lang=BCP[document.getElementById('targetLang').value]||'en-US';
-  u.rate=0.9; u.pitch=1;
-  u.onstart=()=>document.getElementById('speakBtn').classList.add('active');
-  u.onend=()=>document.getElementById('speakBtn').classList.remove('active');
-  window.speechSynthesis.speak(u); toast('Speaking…','🔊');
-}
-
-/* SAVE/HISTORY */
-function saveEntry(){
-  const text=document.getElementById('inputText').value.trim();
-  if(!text||!outText){toast('Translate first!','⚠️');return;}
-  let h=JSON.parse(localStorage.getItem('tl_h')||'[]');
-  h.unshift({id:Date.now(),from:document.getElementById('sourceLang').value,to:document.getElementById('targetLang').value,input:text,output:outText,time:new Date().toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})});
-  if(h.length>60)h.pop(); localStorage.setItem('tl_h',JSON.stringify(h));
-  toast('Saved!','💾');
-}
-function loadHist(){
-  fetch(API+'/history').then(r=>r.json()).then(renderHist).catch(()=>renderHist(JSON.parse(localStorage.getItem('tl_h')||'[]')));
-}
-function renderHist(data){
-  const g=document.getElementById('histGrid');
-  if(!data.length){g.innerHTML='<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-msg">No translations yet.</div></div>';return;}
-  g.innerHTML=data.map((r,i)=>`<div class="h-card" style="animation-delay:${i*.04}s"><div class="h-meta"><span class="h-lang">${LNAME[r.from||r.source_lang]||r.from||r.source_lang}</span><span class="h-arrow">→</span><span class="h-lang">${LNAME[r.to||r.target_lang]||r.to||r.target_lang}</span><span class="h-time">${r.time||r.timestamp||''}</span></div><div class="h-texts"><div><div class="h-block-label">Original</div><div class="h-block-text">${esc(r.input||r.input_text||'')}</div></div><div><div class="h-block-label">Translated</div><div class="h-block-text">${esc(r.output||r.output_text||'')}</div></div></div></div>`).join('');
-}
-function clearHistory(){
-  localStorage.removeItem('tl_h');renderHist([]);
-  fetch(API+'/history',{method:'DELETE'}).catch(()=>{});
-  toast('Cleared!','🗑');
-}
-
-/* TOAST */
-let tt;
-function toast(msg,icon='✅'){
-  clearTimeout(tt);
-  document.getElementById('toastMsg').textContent=msg;
-  document.querySelector('.t-icon').textContent=icon;
-  const t=document.getElementById('toast'); t.classList.add('show');
-  tt=setTimeout(()=>t.classList.remove('show'),2800);
-}
-function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-</script>
+<script src="js/app.js"></script>
 </body>
 </html>
