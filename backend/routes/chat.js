@@ -49,7 +49,7 @@ router.post('/message', auth, async function(req, res) {
     );
 
     var langName   = LANG_NAMES[language] || 'English';
-    var systemPrompt = 'You are LinguaBot, an expert multilingual AI assistant. ALWAYS respond in '+langName+' ONLY. Be helpful, friendly, and culturally aware. Keep responses concise but thorough.';
+    var systemPrompt = 'You are LingoGO, an expert multilingual AI assistant. ALWAYS respond in '+langName+' ONLY. Be helpful, friendly, and culturally aware. Keep responses concise but thorough.';
 
     var apiMessages = [{ role:'system', content:systemPrompt }];
     history.forEach(function(m) {
@@ -120,7 +120,7 @@ router.post('/image', auth, async function(req, res) {
     var langName = LANG_NAMES[language] || 'English';
 
     var systemPrompt =
-      'You are LinguaBot, an expert multilingual AI assistant with vision capabilities. ' +
+      'You are LingoGO, an expert multilingual AI assistant with vision capabilities. ' +
       'When analyzing images: ' +
       '1. DETECT any text in the image and identify its language. ' +
       '2. TRANSLATE any detected text into '+langName+'. ' +
