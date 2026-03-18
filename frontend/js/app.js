@@ -489,18 +489,18 @@ function speakText(text, lang) {
 document.getElementById('btn-export').addEventListener('click', () => {
   const msgs=messagesArea.querySelectorAll('.msg');
   if (!msgs.length) return showToast('No messages to export!');
-  let content='LinguaBot Chat Export\nSession: '+chatTitle.textContent+'\nDate: '+new Date().toLocaleString()+'\n'+'─'.repeat(50)+'\n\n';
-  msgs.forEach(msg=>{ const role=msg.classList.contains('user')?'You':'LinguaBot'; const bubble=msg.querySelector('.msg-bubble'); const meta=msg.querySelector('.msg-meta'); content+='['+(meta?meta.innerText:'')+'] '+role+':\n'+(bubble?bubble.innerText:'')+'\n\n'; });
+  let content='LingoGO Chat Export\nSession: '+chatTitle.textContent+'\nDate: '+new Date().toLocaleString()+'\n'+'─'.repeat(50)+'\n\n';
+  msgs.forEach(msg=>{ const role=msg.classList.contains('user')?'You':'LingoGO'; const bubble=msg.querySelector('.msg-bubble'); const meta=msg.querySelector('.msg-meta'); content+='['+(meta?meta.innerText:'')+'] '+role+':\n'+(bubble?bubble.innerText:'')+'\n\n'; });
   const blob=new Blob([content],{type:'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=document.createElement('a');
-  a.href=url; a.download='linguabot-'+Date.now()+'.txt'; a.click(); URL.revokeObjectURL(url);
+  a.href=url; a.download='LingoGO-'+Date.now()+'.txt'; a.click(); URL.revokeObjectURL(url);
   showToast('📄 Chat exported!');
 });
 document.getElementById('btn-export-pdf').addEventListener('click', () => {
   const msgs=messagesArea.querySelectorAll('.msg');
   if (!msgs.length) return showToast('No messages!');
   const w=window.open('','_blank');
-  let html='<html><head><title>LinguaBot</title><style>body{font-family:sans-serif;max-width:700px;margin:40px auto;color:#111}h2{color:#7C3AED}.msg{margin-bottom:14px;padding:12px;border-radius:10px}.user{background:#EDE9FE;text-align:right}.bot{background:#F3F4F6}.role{font-size:11px;font-weight:bold;color:#666;margin-bottom:4px}.time{font-size:11px;color:#aaa;margin-top:4px}img{max-width:200px;border-radius:8px}</style></head><body><h2>🌐 LinguaBot</h2><p style="color:#888">'+chatTitle.textContent+' — '+new Date().toLocaleString()+'</p>';
-  msgs.forEach(msg=>{ const role=msg.classList.contains('user')?'You':'LinguaBot'; const bubble=msg.querySelector('.msg-bubble'); const meta=msg.querySelector('.msg-meta'); html+='<div class="msg '+(msg.classList.contains('user')?'user':'bot')+'"><div class="role">'+role+'</div><div>'+(bubble?bubble.innerHTML:'')+'</div><div class="time">'+(meta?meta.innerText:'')+'</div></div>'; });
+  let html='<html><head><title>LingoGO</title><style>body{font-family:sans-serif;max-width:700px;margin:40px auto;color:#111}h2{color:#7C3AED}.msg{margin-bottom:14px;padding:12px;border-radius:10px}.user{background:#EDE9FE;text-align:right}.bot{background:#F3F4F6}.role{font-size:11px;font-weight:bold;color:#666;margin-bottom:4px}.time{font-size:11px;color:#aaa;margin-top:4px}img{max-width:200px;border-radius:8px}</style></head><body><h2>🌐 LingoGO</h2><p style="color:#888">'+chatTitle.textContent+' — '+new Date().toLocaleString()+'</p>';
+  msgs.forEach(msg=>{ const role=msg.classList.contains('user')?'You':'LingoGO'; const bubble=msg.querySelector('.msg-bubble'); const meta=msg.querySelector('.msg-meta'); html+='<div class="msg '+(msg.classList.contains('user')?'user':'bot')+'"><div class="role">'+role+'</div><div>'+(bubble?bubble.innerHTML:'')+'</div><div class="time">'+(meta?meta.innerText:'')+'</div></div>'; });
   html+='</body></html>'; w.document.write(html); w.document.close(); setTimeout(()=>w.print(),500);
 });
 
